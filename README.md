@@ -30,14 +30,14 @@ original版がうまく動かなかったので、色々修正。
 
 ・Scene → Edit → URLs でScrapeできるようになった
 
-・Performer → Edit → URL でScrapeできるようになった。
+・Performers → Edit → URL でScrapeできるようになった。
 
 
 まだできないこと
 ・Scene → Edit → Scrape with... で検索できない
   多分ファイル名になってる品番が正しく渡されてない気がする。
 
-・Performer → Edit → Scrape with... で検索結果はでるが、Scrapeできない。
+・Performers → Edit → Scrape with... で検索結果はでるが、Scrapeできない。
 
 
 memo
