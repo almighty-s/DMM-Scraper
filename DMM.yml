@@ -22,11 +22,11 @@ sceneByURL:
 
 sceneByName:
   action: scrapeXPath
-  queryURL: https://www.dmm.co.jp/mono/-/search/=/searchstr={}%20-POD%20-DOD%20-BOD%20-アウトレット%20-ブルーレイディスク
-  queryURLReplace:
-    filename:
-      - regex: ^([^-]+)-
-        with: $1$2
+  queryURL: https://www.dmm.co.jp/mono/-/search/=/searchstr={}%20-POD%20-DOD%20-BOD%20-アウトレット%20-ブルーレイディスク/
+#  queryURLReplace:
+#    filename:
+#      - regex: ^([^-]+)-
+#        with: $1$2
   scraper: sceneSearch
 sceneByQueryFragment:
   action: scrapeXPath
