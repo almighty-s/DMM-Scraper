@@ -1,9 +1,9 @@
-
 name: DMM
 sceneByFragment:
   action: scrapeXPath
   queryURL: https://www.dmm.co.jp/mono/-/search/=/searchstr={filename}%20-POD%20-DOD%20-BOD%20-アウトレット%20-ブルーレイディスク/
 # filenameのあとに %20- をつけて検索除外文字列を追加する
+
   queryURLReplace:
 #    filename:
 #      - regex: \..+$
@@ -15,6 +15,7 @@ sceneByFragment:
       - regex: ^([^-]+)-
         with: $1$2
   scraper: sceneQueryScraper
+
 sceneByURL:
   - action: scrapeXPath
     url:
@@ -25,6 +26,8 @@ sceneByName:
   action: scrapeXPath
   queryURL: https://www.dmm.co.jp/mono/-/search/=/searchstr={}%20-POD%20-DOD%20-BOD%20-アウトレット%20-ブルーレイディスク/
   scraper: sceneSearch
+# 素人まで拾うなら https://www.dmm.co.jp/-/search/=/searchstr= にしてsceneSearchをいじる
+
 sceneByQueryFragment:
   action: scrapeXPath
   queryURL: "{url}"
@@ -36,10 +39,12 @@ performerByURL:
       - https://actress.dmm.co.jp
       - https://pics.dmm.co.jp
     scraper: performerScraper
+
 performerByName:
   action: scrapeXPath
   queryURL: https://actress.dmm.co.jp/-/search/=/searchstr={}/
   scraper: performerSearch
+
 performerByFragment:
   action: scrapeXPath
   queryURL: https://actress.dmm.co.jp/-/search/=/searchstr={}/
