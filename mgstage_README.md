@@ -1,25 +1,14 @@
 orginal
 
-[https://github.com/stashapp/CommunityScrapers/blob/master/scrapers/mgstage.yml]
+https://github.com/stashapp/CommunityScrapers/blob/master/scrapers/mgstage.yml
 
-20240921
+20240922
 
 original版がうまく動かなかったので、色々修正。
 
-・sceneSearch: で Title: Details: の取得方法を変更
+・sceneSearch: で 取得方法を変更
 
-・sceneByFragment: で queryURL: に除外キーワードを追加
-                   で queryURLReplace: を変更
-
-・sceneByName: で queryURL: queryURLReplace: を変更
-
-・sceneSearch: を変更
-
-・sceneQueryScraper: を変更
-
-・performerByURL: performerByName: を追加
-
-・performerSearch: performerScraper: を追加
+・sceneScraper: で Performers:Name: の取得方法を変更
 
 
 できるようになったこと
@@ -30,16 +19,15 @@ original版がうまく動かなかったので、色々修正。
 
 ・Scene → Edit → URLs でScrapeできるようになった
 
-・Performers → Edit → URL でScrapeできるようになった。
-
 
 まだできないこと
 ・Scene → Edit → Scrape with... で検索できない
   多分ファイル名になってる品番が正しく渡されてない気がする。
 
-・Performers → Edit → Scrape with... で検索結果はでるが、Scrapeできない。
+・sceneScraper: で Performers:Name: が配信専用動画の一部でHTMLタグの構成が違う(名前にリンクの有り無し)から出演者名がうまく取得できない。
+  なんとか両対応できないかなぁ。
 
-
+  
 memo
 FANZA動画からScrapeしてるバージョン
 
