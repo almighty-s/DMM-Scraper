@@ -1,0 +1,82 @@
+name: mgstage
+sceneByFragment:
+  action: scrapeXPath
+  queryURL: https://www.mgstage.com/search/cSearch.php?search_word={filename}
+  queryURLReplace:
+    filename:
+      - regex: ^([^-]+)-
+        with: $1-$2
+  scraper: sceneQueryScraper
+  
+sceneByURL:
+  - action: scrapeXPath
+    url:
+      - www.mgstage.com/product/ # www is needed here, do not remove 
+    scraper: sceneScraper
+    
+sceneByName:
+  action: scrapeXPath
+  queryURL: https://www.mgstage.com/search/cSearch.php?search_word={}
+  scraper: sceneSearch
+  
+sceneByQueryFragment:
+  action: scrapeXPath
+  queryURL: "{url}"
+  scraper: sceneScraper
+
+
+xPathScrapers:
+  sceneSearch:
+    common:
+      $videoItem: //*[@class="rank_list"]
+    scene:
+      Title: $videoItem//p[@class="title lineclamp"]/text()
+      URL: 
+        selector: $videoItem/ul/li/h5/a/@href
+        postProcess:
+          - replace:
+              - regex: ^
+                with: "https://www.mgstage.com"
+      Image:
+        selector: $videoItem/ul/li/h5/a/img/@src
+
+
+  sceneQueryScraper:
+    scene:
+      Title: //*[@id="center_column"]/div[1]/h1[1]
+      URL: 
+        selector: //head//link[1]
+      Image: 
+        selector: //*[@id="center_column"]/div[1]/div[1]/div[1]/div[1]/h2[1]/img[1]
+  sceneScraper:
+    scene:
+      Title: //*[@id="center_column"]/div[1]/h1[1]
+      Date: 
+        selector: //th[contains(.,"配信開始日：")]/../td/text()
+        postProcess:
+          - parseDate: 2006/01/02
+      Details: //meta[@property="og:description"]/@content
+      Tags:
+        Name: //th[contains(.,"ジャンル：")]/../td/a/text()
+      Performers:
+        Name:
+#            selector: //th[contains(.,"出演：")]/../td/a/text() #DVD用
+            selector: //th[contains(.,"出演：")]/../td/text() #配信用
+      Studio:
+        Name:
+            selector: //th[contains(.,"メーカー：")]/../td/a/text()
+      Image: 
+        selector: //meta[@property="og:image"]/@content
+      URL: 
+        selector: //head//link[1]@href
+driver:
+  cookies:
+    - CookieURL: "https://www.mgstage.com/product/"
+      Cookies:
+        - Name: "adc"
+          Domain: ".mgstage.com"
+          Value: "1"
+          Path: "/"
+  headers:
+    - Key: User-Agent
+      Value: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
