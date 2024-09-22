@@ -6,7 +6,9 @@ https://github.com/stashapp/CommunityScrapers/blob/master/scrapers/DMM.yml
 
 original版がうまく動かなかったので、色々修正。
 
-・sceneSearch: で Title: Details: の取得方法を変更
+・sceneSearch: で Title: の取得方法を変更
+
+・sceneScraper: で Title: Details: の取得方法を変更
 
 ・sceneByFragment: で queryURL: に除外キーワードを追加
                    で queryURLReplace: を変更
