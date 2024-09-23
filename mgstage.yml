@@ -40,7 +40,6 @@ xPathScrapers:
       Image:
         selector: $videoItem/ul/li/h5/a/img/@src
 
-
   sceneQueryScraper:
     scene:
       Title: //*[@id="center_column"]/div[1]/h1[1]
@@ -48,6 +47,7 @@ xPathScrapers:
         selector: //head//link[1]
       Image: 
         selector: //*[@id="center_column"]/div[1]/div[1]/div[1]/div[1]/h2[1]/img[1]
+
   sceneScraper:
     scene:
       Title: //*[@id="center_column"]/div[1]/h1[1]
@@ -55,6 +55,8 @@ xPathScrapers:
         selector: //th[contains(.,"配信開始日：")]/../td/text()
         postProcess:
           - parseDate: 2006/01/02
+      Code: 
+        selector: //th[contains(.,"品番：")]/../td/text()
       Details: //meta[@property="og:description"]/@content
       Tags:
         Name: //th[contains(.,"ジャンル：")]/../td/a/text()
@@ -68,7 +70,8 @@ xPathScrapers:
       Image: 
         selector: //meta[@property="og:image"]/@content
       URL: 
-        selector: //head//link[1]@href
+        selector: //head//link[1]/@href
+
 driver:
   cookies:
     - CookieURL: "https://www.mgstage.com/product/"
