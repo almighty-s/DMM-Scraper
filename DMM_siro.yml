@@ -1,0 +1,215 @@
+name: DMM_siro
+sceneByFragment:
+  action: scrapeXPath
+  queryURL: https://www.dmm.co.jp/digital/videoc/-/list/search/=/searchstr={filename}/
+# filenameのあとに %20- をつけて検索除外文字列を追加する
+
+  queryURLReplace:
+#    filename:
+#      - regex: \..+$
+#        with: ""
+    filename: #from R18.dev
+      # Gets the JAV code from the filename using a modified version of the Javinizer regex
+      # https://regex101.com/r/aIm3op/2
+#      - regex: .*?([a-zA-Z|tT28]+)-?(\d+)[zZ]?[eE]?(?:-pt)?(\d{1,2})?.*
+      - regex: ^([^-]+)-
+        with: $1$2
+  scraper: sceneQueryScraper
+
+sceneByURL:
+  - action: scrapeXPath
+    url:
+      - https://www.dmm.co.jp
+    scraper: sceneScraper
+
+sceneByName:
+  action: scrapeXPath
+  queryURL: https://www.dmm.co.jp/digital/videoc/-/list/search/=/searchstr={}/
+  scraper: sceneSearch
+# 素人まで拾うなら https://www.dmm.co.jp/search/=/searchstr= にしてsceneSearchをいじる
+
+sceneByQueryFragment:
+  action: scrapeXPath
+  queryURL: "{url}"
+  scraper: sceneScraper
+
+performerByURL:
+  - action: scrapeXPath
+    url: 
+      - https://actress.dmm.co.jp
+      - https://pics.dmm.co.jp
+    scraper: performerScraper
+
+performerByName:
+  action: scrapeXPath
+  queryURL: https://actress.dmm.co.jp/-/search/=/searchstr={}/
+  scraper: performerSearch
+
+performerByFragment:
+  action: scrapeXPath
+  queryURL: https://actress.dmm.co.jp/-/search/=/searchstr={}/
+  scraper: performerSearch
+
+
+xPathScrapers:
+  sceneSearch:
+    common:
+      $videoItem: //*[@id="list"]
+    scene:
+      Title: $videoItem/li/div/p/a//span[@class="txt"]
+      URL: 
+        selector: $videoItem/li/div/p[@class="tmb"]/a/@href
+      Image:
+        selector: $videoItem//span[@class="img"]/img/@src
+
+  sceneQueryScraper:
+    scene:
+      Title: //h1[@id="title"]/text()
+      URL: 
+        selector: //meta[@property="og:url"]/@content
+      Image:
+        selector: //meta[@property="og:image"]/@content
+
+  sceneScraper:
+    scene:
+      Title: //h1[@id="title"]/text()
+      Details: //meta[@property="og:description"]/@content
+      Date:
+        selector: //td[contains(.,"配信開始日") and @class="nw"]/following-sibling::td
+        postProcess:
+          - replace:
+              - regex: (\d{4})/(\d{2})/(\d{2})
+                with: $1-$2-$3
+          - parseDate: 2006-01-02
+      Code: 
+        selector: //td[contains(.,"品番") and @class="nw"]/following-sibling::td
+        postProcess:
+          - replace:
+              - regex: ([a-zA-Z]+)(\d+)
+                with: $1-$2
+      Tags:
+        Name: //td[contains(.,"ジャンル") and @class="nw"]/following-sibling::td/a
+      Performers:
+        Name: //td[contains(.,"出演者") and @class="nw"]/following-sibling::td/span/a
+      Studio:
+        Name: 
+          selector: //td[contains(.,"レーベル") and @class="nw"]/following-sibling::td/a
+          postProcess:
+            - map:
+                ムゲンエンターテインメント: MUGEN Entertainment
+                ケイ・エム・プロデュース: K M Produce
+                オペラ: OPERA
+                SODクリエイト: SOD Create
+                三和出版: Sanwa Shuppan
+                セレブの友: Celeb no Tomo
+                AVS collector’s: AVS collector's
+                クィーンロード: SmQueenRoad
+                キャットウォーク: Catwalk
+                ルビー: Ruby
+                マキシング: Maxing
+                プールクラブ・エンタテインメント: POOLCLUB ENTERTAINMENT
+                レイディックス: RADIX
+                エスワン ナンバーワンスタイル: S1 NO.1 STYLE
+                大塚フロッピー: Otsuka Floppy
+                ムーディーズ: Moodyz
+                ヴィ: V
+                #キチックス/妄想族: Kitixx/妄想族
+                #バミューダ/妄想族: BERMUDA/妄想族
+                #ボニータ/妄想族: Bonita/妄想族
+                #タマネギ/妄想族: Onion/妄想族
+                #ミステリア/妄想族: Mystery/妄想族
+
+      Image: //meta[@property="og:image"]/@content
+      URL: 
+        selector: //meta[@property="og:url"]/@content
+      Director: //td[contains(.,"監督") and @class="nw"]/following-sibling::td/a
+
+  performerSearch: 
+    common:
+      $performerItem: //*[@id="main-contens"]
+    performer: 
+      Name: $performerItem/div[1]/div[1]/div[3]/div[1]/ul[1]/li[1]/a[1]/p[@class="p-list-actress__name"]/text()
+      Birthdate:
+        selector: $performerItem/div[1]/div[1]/div[2]/dl[1]/dd[1]
+        postProcess:
+          - replace:
+              - regex: 年
+                with: "-"
+              - regex: 月
+                with: "-"
+              - regex: 日
+                with: ""
+      Height: 
+        selector: $performerItem/div[1]/div[1]/div[2]/dl[1]/dd[4]
+        postProcess:
+          - replace:
+              - regex: T
+                with: ""
+              - regex: cm.*
+                with: ""
+      Measurements: 
+        selector: $performerItem/div[1]/div[1]/div[2]/dl[1]/dd[4]
+        postProcess:
+          - replace:
+              - regex: ^[^ ]+
+                with: ""
+      
+      # Measurements: //*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '胸圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '腰圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '臀圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '罩杯')]
+      Image: 
+        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/span[1]/img[@class="p-list-actress__img"]/@src
+      URL:
+        selector: //*[@id="main-contens"]//ul/li[@class="p-list-actress"]/a/@href
+        postProcess:
+          - replace:
+              - regex: ^
+                with: "https://actress.dmm.co.jp/"
+  performerScraper: 
+    performer: 
+      Name: //*[@id="main-contens"]/div[1]/div[1]/div[3]/div[1]/ul[1]/li[1]/a[1]/p[1]/@text()
+      Birthdate:
+        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[1]
+        postProcess:
+          - replace:
+              - regex: 年
+                with: "-"
+              - regex: 月
+                with: "-"
+              - regex: 日
+                with: ""
+      Height: 
+        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[4]
+        postProcess:
+          - replace:
+              - regex: T
+                with: ""
+              - regex: cm.*
+                with: ""
+      Measurements: 
+        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[4]
+        postProcess:
+          - replace:
+              - regex: ^[^ ]+
+                with: ""
+      
+      # Measurements: //*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '胸圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '腰圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '臀圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '罩杯')]
+      Image: 
+        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/span[1]/img[1]/@src
+      URL:
+        selector: //*[@id="main-contens"]//ul/li[@class="p-list-actress"]/a/@href
+        postProcess:
+          - replace:
+              - regex: ^
+                with: "https://actress.dmm.co.jp/"
+
+
+driver:
+  cookies:
+    - CookieURL: "https://www.dmm.co.jp"
+      Cookies:
+        - Name: "age_check_done"
+          Domain: ".dmm.co.jp"
+          Value: "1"
+          Path: "/"
+  headers:
+    - Key: User-Agent
+      Value: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
