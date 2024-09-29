@@ -5,13 +5,7 @@ sceneByFragment:
 # filenameのあとに %20- をつけて検索除外文字列を追加する
 
   queryURLReplace:
-#    filename:
-#      - regex: \..+$
-#        with: ""
-    filename: #from R18.dev
-      # Gets the JAV code from the filename using a modified version of the Javinizer regex
-      # https://regex101.com/r/aIm3op/2
-#      - regex: .*?([a-zA-Z|tT28]+)-?(\d+)[zZ]?[eE]?(?:-pt)?(\d{1,2})?.*
+    filename:
       - regex: ^([^-]+)-
         with: $1$2
   scraper: sceneQueryScraper
@@ -41,11 +35,6 @@ performerByURL:
     scraper: performerScraper
 
 performerByName:
-  action: scrapeXPath
-  queryURL: https://actress.dmm.co.jp/-/search/=/searchstr={}/
-  scraper: performerSearch
-
-performerByFragment:
   action: scrapeXPath
   queryURL: https://actress.dmm.co.jp/-/search/=/searchstr={}/
   scraper: performerSearch
@@ -131,48 +120,29 @@ xPathScrapers:
     common:
       $performerItem: //*[@id="main-contens"]
     performer: 
-      Name: $performerItem/div[1]/div[1]/div[3]/div[1]/ul[1]/li[1]/a[1]/p[@class="p-list-actress__name"]/text()
-      Birthdate:
-        selector: $performerItem/div[1]/div[1]/div[2]/dl[1]/dd[1]
-        postProcess:
-          - replace:
-              - regex: 年
-                with: "-"
-              - regex: 月
-                with: "-"
-              - regex: 日
-                with: ""
-      Height: 
-        selector: $performerItem/div[1]/div[1]/div[2]/dl[1]/dd[4]
-        postProcess:
-          - replace:
-              - regex: T
-                with: ""
-              - regex: cm.*
-                with: ""
-      Measurements: 
-        selector: $performerItem/div[1]/div[1]/div[2]/dl[1]/dd[4]
-        postProcess:
-          - replace:
-              - regex: ^[^ ]+
-                with: ""
-      
-      # Measurements: //*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '胸圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '腰圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '臀圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '罩杯')]
+      Name: $performerItem//p[@class="p-list-actress__name"]
       Image: 
-        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/span[1]/img[@class="p-list-actress__img"]/@src
+        selector: $performerItem//img[@class="p-list-actress__img"]/@src
       URL:
-        selector: //*[@id="main-contens"]//ul/li[@class="p-list-actress"]/a/@href
+        selector: $performerItem//a[@class="p-list-actress__link"]/@href
         postProcess:
           - replace:
               - regex: ^
-                with: "https://actress.dmm.co.jp/"
+                with: "https://actress.dmm.co.jp"
+
   performerScraper: 
+    common:
+      $performerItem: //*[@id="main-contens"]
     performer: 
-      Name: //*[@id="main-contens"]/div[1]/div[1]/div[3]/div[1]/ul[1]/li[1]/a[1]/p[1]/@text()
+      Name: //meta[@property="og:title"]/@content
+      Image: //meta[@property="og:image"]/@content
+      URL: //meta[@property="og:url"]/@content
       Birthdate:
         selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[1]
         postProcess:
           - replace:
+              - regex: ---
+                with: ""
               - regex: 年
                 with: "-"
               - regex: 月
@@ -183,26 +153,27 @@ xPathScrapers:
         selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[4]
         postProcess:
           - replace:
-              - regex: T
+              - regex: ---
                 with: ""
-              - regex: cm.*
+              - regex: B.*
                 with: ""
+              - regex: ^T(\d+)cm$
+                with: $1
       Measurements: 
         selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[4]
         postProcess:
           - replace:
-              - regex: ^[^ ]+
+              - regex: ---
                 with: ""
-      
+              - regex: ^T[^ ]+
+                with: ""
       # Measurements: //*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '胸圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '腰圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '臀圍')]//*[@id="waterfall"]/div[1]/div/div[2]/p[contains(text(), '罩杯')]
-      Image: 
-        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/span[1]/img[1]/@src
-      URL:
-        selector: //*[@id="main-contens"]//ul/li[@class="p-list-actress"]/a/@href
+      Details: 
+        selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[6]
         postProcess:
           - replace:
-              - regex: ^
-                with: "https://actress.dmm.co.jp/"
+              - regex: ---
+                with: ""
 
 
 driver:
