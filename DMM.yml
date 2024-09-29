@@ -143,12 +143,9 @@ xPathScrapers:
           - replace:
               - regex: ---
                 with: ""
-              - regex: 年
-                with: "-"
-              - regex: 月
-                with: "-"
-              - regex: 日
-                with: ""
+          - replace:
+              - regex: (\d{4})年(\d{2})月(\d{2})日
+                with: $1-$2-$3
       Height: 
         selector: //*[@id="main-contens"]/div[1]/div[1]/div[2]/dl[1]/dd[4]
         postProcess:
