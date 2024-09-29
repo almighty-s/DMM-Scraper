@@ -2,9 +2,15 @@ orginal
 
 https://github.com/stashapp/CommunityScrapers/blob/master/scrapers/DMM.yml
 
+20240929
+
+・Performers → Edit → Scrape with... で検索結果からScrapeできるようになった
+　項目で 「---」 は空欄に変換する処理を追加
+　サイズで身長未記入のときでも、抽出できるように調整
+ 
 20240921
 
-original版がうまく動かなかったので、色々修正。
+original版がうまく動かなかったので、色々修正
 
 ・sceneSearch: で Title: の取得方法を変更
 
@@ -32,14 +38,14 @@ original版がうまく動かなかったので、色々修正。
 
 ・Scene → Edit → URLs でScrapeできるようになった
 
-・Performers → Edit → URL でScrapeできるようになった。
+・Performers → Edit → URL でScrapeできるようになった
 
 
 まだできないこと
 ・Scene → Edit → Scrape with... で検索できない
-  多分ファイル名になってる品番が正しく渡されてない気がする。
+  多分ファイル名になってる品番が正しく渡されてない気がする
 
-・Performers → Edit → Scrape with... で検索結果はでるが、Scrapeできない。
+・Performers → Edit → Scrape with... で検索結果はでるが、Scrapeできない
 
 
 memo
