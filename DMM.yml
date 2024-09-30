@@ -65,7 +65,7 @@ xPathScrapers:
   sceneScraper:
     scene:
       Title: //h1[@id="title"]/text()
-      Details: //meta[@property="og:description"]/@content
+      Details: //p[@class="mg-b20"]
       Date:
         selector: //td[contains(.,"発売日") and @class="nw"]/following-sibling::td
         postProcess:
