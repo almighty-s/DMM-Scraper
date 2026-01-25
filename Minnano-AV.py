@@ -14,12 +14,8 @@ except ModuleNotFoundError as e:
     print(json.dumps({"error": f"Missing 'py_common': {e}. Download it from CommunityScrapers/scrapers/py_common"}))
     sys.exit(1)
 
-try:
-    import requests
-    from lxml import etree
-except ModuleNotFoundError as e:
-
-
+import requests
+from lxml import etree
 
 XPATHS = {
     "birthdate": "//span[text()='生年月日']/../p/text()",
