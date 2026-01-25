@@ -26,8 +26,9 @@ XPATHS = {
     "image": "//div[@class='act-area']/div[@class=\"thumb\"]/img/@src",
     "instagram": ("//span[text()='ブログ']/../p/a[contains(@href,'instagram.com')]/@href"),
     "measurements": (
-        "//span[text()='サイズ']/../p/a/@href|//span[text()='サイズ']/../p/text()"
+        "//span[text()='サイズ']/../p"
     ),
+
     "h1_kanji": '//section[@class="main-column details"]/h1/text()',
     "h1_romaji": '//section[@class="main-column details"]/h1/span/text()',
     "aliases": "//section[@class=\"main-column details\"]/h1/text()|//span[text()='別名']/following-sibling::p/text()",
@@ -35,7 +36,9 @@ XPATHS = {
     "name": '//section[@class="main-column details"]/h1/span/text()',
     "search_url": '../h2[@class="ttl"]/a/@href',
     "search": '//p[@class="furi"]',
+    "tags": "//span[text()='タグ']/../div/a/text()",
     "twitter": ("//span[text()='ブログ']/../p/a[contains(@href,'twitter.com')]/@href|//span[text()='ブログ']/../p/a[contains(@href,'x.com')]/@href"),
+
 }
 
 REGEXES = {
@@ -46,8 +49,9 @@ REGEXES = {
     # https://regex101.com/r/FSqv0L/1
     "career": (r"(?P<start>\d{4})年?(?:\d+月)? ?(?:\d+)?日?[-~]? ?(?:(?P<end>\d+)?)?年?"),
     "measurements": (
-        r"(?<=T)(?P<height>\d+)?.*?B(?P<bust>\d+)\((?P<cup>[^)]+)\).*?W(?P<waist>\d+).*?H(?P<hip>\d+)"
+        r"(?:T(?P<height>\d+))?.*?B(?P<bust>\d+)\((?P<cup>[^)]+)\).*?W(?P<waist>\d+).*?H(?P<hip>\d+)"
     ),
+
 
 
     "url": r"https://www.minnano-av.com/actress\d+.html",
@@ -268,8 +272,12 @@ def performer_by_url(url):
         else:
             log.debug("Birthday XPath matched, but no value found.")
 
-    if measurements_result := get_xpath_result(tree, XPATHS["measurements"]):
-        combined = "".join(measurements_result)
+    if measurements_node := get_xpath_result(tree, XPATHS["measurements"]):
+        if isinstance(measurements_node, list):
+            measurements_node = measurements_node[0]
+        
+        combined = measurements_node.xpath("string()")
+
         if match := re.search(REGEXES["measurements"], convert_to_halfwidth(combined)):
             if lang == "JP":
                 scrape["measurements"] = f"B{match['bust']}({match['cup']}) W{match['waist']} H{match['hip']}"
@@ -314,8 +322,13 @@ def performer_by_url(url):
             scrape["image"] = str.format(
                 FORMATS["image"], IMAGE_URL_FRAGMENT=clean_url_fragment
             )
-        else:
             log.debug("Image XPath matched, but no value found.")
+            
+    if tags_result := get_xpath_result(tree, XPATHS["tags"]):
+        if not isinstance(tags_result, list):
+            tags_result = [tags_result]
+        scrape["tags"] = [{"name": tag} for tag in tags_result]
+
 
     aliases.discard(None)
     sorted_aliases = sorted(aliases)
